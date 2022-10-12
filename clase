@@ -1,0 +1,47 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+#Oliver Nabani, Oct 2022
+
+from random import randrange
+
+class CtrlSorteo:
+
+    def __init__(self, admin_lower):
+        self.inicioRegistros = False            #Pistoletazo de salida
+        self.win = False                        #Ganador definido
+        self.nick_admin = str(admin_lower)      #'olivernabani'
+        self.ganador = ''                       #Nombre del ganador
+        self.participantes = []                 #Array de participantes sin repetir
+        
+    
+    #Definición de premio  
+    def premio_para(self,mensajero):
+        if (mensajero.lower() == self.nick_admin) and not(self.win): #Caso Admin y sin ganador
+            self.win = True
+            n = len(self.participantes)
+            g = randrange(0,n,1)        
+            self.ganador = self.participantes[g]
+            frase = f'El ganador del sorteo has sido @{self.ganador.upper()}!!'
+        else:
+            if (mensajero.lower() == self.nick_admin):
+                frase = f'Todavía no hay ganador'
+            else:
+                frase = f'@{mensajero} no toques, por qué tocas'
+        return frase
+    
+    #Funcionamiento del Sorteo
+    def sorteo(self, mensajero):
+        if mensajero.lower() == self.nick_admin:                #Caso Admin
+            if self.inicioRegistros == False:
+                self.inicioRegistros = True
+                frase = f'{mensajero} se ha abierto el sorteo'
+            else:
+                self.inicioRegistros = False
+                frase = f'{mensajero} se ha cerrado el sorteo'
+        else:                                                   #Caso Chat
+            if (mensajero in self.participantes) and self.inicioRegistros:
+                frase = f'{mensajero} ya estás registrado en el sorteo'
+            if not(mensajero in self.participantes) and self.inicioRegistros:
+                self.participantes.append(mensajero)
+                frase = f'{mensajero} registrado!'
+        return frase   
